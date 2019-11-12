@@ -1,9 +1,22 @@
 import React from 'react';
-import {View, Text, Button} from 'react-native';
+import {
+    View,
+    Text,
+    ActivityIndicator} from 'react-native';
+import CButton from "../../Components/CButton";
+import CTextInput from "../../Components/CTextInput";
 
 export default class LoginScreen extends React.Component {
+    static navigationOptions = {
+        title: 'Awesome Project',
+    };
+
+    state = {
+        isLoading: false
+    }
+
     _handlerGoToHome = () => {
-        this.props.navigation.navigate("Home");
+
     }
 
     componentDidMount() {
@@ -12,12 +25,54 @@ export default class LoginScreen extends React.Component {
 
     render() {
         return (
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                <Text>Login Screen</Text>
-                <Button
-                    title={"login"}
-                    onPress={() => this._handlerGoToHome}
-                />
+            <View style={{
+                flex: 1,
+                flexDirection: "column",
+                padding: 20}}>
+
+                <Text style={{alignSelf: "center"}}>Login Screen</Text>
+
+                <CTextInput
+                    styleContainer={{
+                        borderWidth: 1,
+                        margin: 20,
+                    }} />
+
+                <CTextInput
+                    styleContainer={{
+                        borderWidth: 1,
+                        marginTop: 5,
+                        margin: 20,
+                    }} />
+
+                <CButton
+                    styleContainer={{
+                        // flex: 1,
+                        // backgroundColor: "blue",
+                        margin: 20,
+                        // flexDirection: "column",
+                        boxWithShadow: {
+                            shadowColor: '#CCC',
+                            shadowOffset: { width: 0, height: 1 },
+                            shadowOpacity: 0.8,
+                            shadowRadius: 2,
+                            elevation: 5
+                        },
+                    }}
+                    text={"login"}
+                    color={"black"}
+                    isLoading={this.state.isLoading}
+                    onPress={() => {
+                        this.setState({
+                            isLoading: true
+                        }, () => {
+                            setTimeout(() => {
+                                this.setState({
+                                    isLoading: false
+                                })
+                            }, 5000)
+                        })
+                    }}/>
             </View>
         )
     }
