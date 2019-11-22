@@ -1,0 +1,118 @@
+import React from 'react';
+import {
+    View,
+    Text,
+    ActivityIndicator,
+    ToastAndroid,
+    CheckBox
+} from 'react-native';
+import CButton from "../../Components/CButton";
+import CTextInput from "../../Components/CTextInput";
+import {styles} from './style';
+
+export default class LoginScreen extends React.Component {
+    static navigationOptions = {
+        title: 'Awesome Project',
+    };
+
+    state = {
+        isLoading: false,
+        username: '',
+        password: '',
+        checked: false,
+    }
+
+    _handlerGoToHome = () => {
+
+    }
+
+  _handleLogin = () => {
+    if (this.state.username === '' || this.state.password === '') {
+      ToastAndroid.showWithGravity(
+        'Email or password should not be empty',
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+      );
+    } else if (!this._handleValidateEmail(this.state.username)) {
+      ToastAndroid.showWithGravity(
+        'Email format not correct',
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+      );
+    } else if (this.state.password.length < 8) {
+      ToastAndroid.showWithGravity(
+        'Password should be greater than 8',
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+      );
+    } else {
+      ToastAndroid.showWithGravity(
+        'LOGIN SUCCESS',
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+      );
+
+      this.props.navigation.navigate('Home', {item: this.state.username});
+    }
+
+    this.setState({
+      isLoading: true
+    }, () => {
+      setTimeout(() => {
+        this.setState({
+          isLoading: false
+        })
+      }, 1000)
+    })
+  };
+
+  _handleValidateEmail = (email) => {
+    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+  };
+
+    componentDidMount() {
+
+    }
+
+    render() {
+        return (
+            <View style={styles.viewLogin}>
+
+                <Text style={{alignSelf: "center"}}>Login Screen</Text>
+
+                <CTextInput
+                    onTyping={(val) => {
+                      this.setState({ username: val})
+                    }}
+
+                    styleContainer={styles.textInputUserName} />
+
+                <CTextInput
+                    onTyping={(val) => {
+                      this.setState({ password: val})
+                    }}
+
+                    secureTextEntry={true}
+
+                    styleContainer={styles.textInputPassword} />
+
+                <View>
+                    <CheckBox
+                      value={this.state.checked}
+                      onValueChange={() => this.setState({ checked: !this.state.checked })} />
+                    <Text>Remember me</Text>
+                </View>
+
+                <CButton
+                    styleContainer={styles.buttonLogin}
+                    text={"login"}
+                    color={"blue"}
+                    isLoading={this.state.isLoading}
+                    onPress={() => {
+                        this._handleLogin();
+                    }}/>
+            </View>
+        )
+    }
+}

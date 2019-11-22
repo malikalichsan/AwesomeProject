@@ -24,10 +24,11 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import Navigator from './src/Navigator';
+import { DefaultTheme, Provider as PaperProvider, Appbar } from 'react-native-paper';
 
 const App: () => React$Node = () => {
   return (
-      <Navigator />
+    <Navigator />
   );
 };
 

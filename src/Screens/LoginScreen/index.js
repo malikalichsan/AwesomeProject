@@ -1,34 +1,41 @@
 import React from 'react';
 import {
-    View,
-    Text,
-    ActivityIndicator,
-    ToastAndroid
+  View,
+  Text,
+  ActivityIndicator,
+  ToastAndroid,
+  CheckBox,
+  ImageBackground,
+  Image
 } from 'react-native';
 import CButton from "../../Components/CButton";
 import CTextInput from "../../Components/CTextInput";
+import {styles} from './style';
+import { TextInput, Button } from 'react-native-paper';
+import Axios from 'axios';
 
 export default class LoginScreen extends React.Component {
-    static navigationOptions = {
-        title: 'Awesome Project',
-    };
+  static navigationOptions = {
+    title: 'Awesome Project',
+  };
 
-    state = {
-        isLoading: false,
-        username: '',
-        password: '',
-    }
+  state = {
+    isLoading: false,
+    username: '',
+    password: '',
+    checked: false,
+  }
 
-    _handlerGoToHome = () => {
+  _handlerGoToHome = () => {
 
-    }
+  }
 
   _handleLogin = () => {
     if (this.state.username === '' || this.state.password === '') {
       ToastAndroid.showWithGravity(
         'Email or password should not be empty',
         ToastAndroid.SHORT,
-        ToastAndroid.CENTER,
+        ToastAndroid.BOTTOM,
       );
     } else if (!this._handleValidateEmail(this.state.username)) {
       ToastAndroid.showWithGravity(
@@ -40,14 +47,32 @@ export default class LoginScreen extends React.Component {
       ToastAndroid.showWithGravity(
         'Password should be greater than 8',
         ToastAndroid.SHORT,
-        ToastAndroid.CENTER,
+        ToastAndroid.BOTTOM,
       );
     } else {
-      ToastAndroid.showWithGravity(
-        'LOGIN SUCCESS',
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER,
-      );
+      let headers = {
+
+      }
+      Axios.post('https://private-370066-awesomeproject1.apiary-mock.com/login', {}, {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      })
+        .then(function (response) {
+          let res = response.data;
+          console.log(res);
+          ToastAndroid.showWithGravity(
+            'LOGIN SUCCESS',
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+          );
+        })
+        .catch(function (error) {
+          console.log(error);
+          ToastAndroid.showWithGravity(
+            'LOGIN FAILED',
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM,
+          );
+        });
 
       this.props.navigation.navigate('Home', {item: this.state.username});
     }
@@ -68,63 +93,52 @@ export default class LoginScreen extends React.Component {
     return re.test(email);
   };
 
-    componentDidMount() {
+  componentDidMount() {
 
-    }
+  }
 
-    render() {
-        return (
-            <View style={{
-                flex: 1,
-                flexDirection: "column",
-                padding: 20}}>
+  render() {
+    return (
+      <View style={styles.wrapperContainer}>
+          <Text style={styles.textLogin}>Log In</Text>
 
-                <Text style={{alignSelf: "center"}}>Login Screen</Text>
+          <TextInput
+            value={this.state.username}
+            onChangeText={(val) => {
+              this.setState({ username: val})
+            }}
+            label='Email'
+            mode='outline'
+            style={styles.textInputUserName} />
 
-                <CTextInput
-                    onTyping={(val) => {
-                      this.setState({ username: val})
-                    }}
+          <CTextInput
+            onChangeText={(val) => {
+              this.setState({ password: val})
+            }}
 
-                    styleContainer={{
-                        borderWidth: 1,
-                        margin: 20,
-                    }} />
+            label={'Password'}
 
-                <CTextInput
-                    onTyping={(val) => {
-                      this.setState({ password: val})
-                    }}
+            mode={'outline'}
 
-                    secureTextEntry={true}
+            value={this.state.password}
 
-                    styleContainer={{
-                        borderWidth: 1,
-                        marginTop: 5,
-                        margin: 20,
-                    }} />
+            secureTextEntry={true} />
 
-                <CButton
-                    styleContainer={{
-                        // flex: 1,
-                        // backgroundColor: "blue",
-                        margin: 20,
-                        // flexDirection: "column",
-                        boxWithShadow: {
-                            shadowColor: '#CCC',
-                            shadowOffset: { width: 0, height: 1 },
-                            shadowOpacity: 0.8,
-                            shadowRadius: 2,
-                            elevation: 5
-                        },
-                    }}
-                    text={"login"}
-                    color={"black"}
-                    isLoading={this.state.isLoading}
-                    onPress={() => {
-                        this._handleLogin();
-                    }}/>
-            </View>
-        )
-    }
+        <View style={styles.wrapperAcc}>
+          <Text style={styles.noAcc}>No account yet ? </Text>
+          <Text style={styles.signUp}>Sign up</Text>
+        </View>
+
+        <Button
+          style={styles.buttonLogin}
+          labelStyle={styles.buttonLoginLabel}
+          mode="contained"
+          onPress={() => {
+            this._handleLogin();
+          }}>
+          Log In
+        </Button>
+      </View>
+    )
+  }
 }
