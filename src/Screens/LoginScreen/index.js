@@ -24,13 +24,9 @@ export default class LoginScreen extends React.Component {
     username: '',
     password: '',
     checked: false,
-  }
+  };
 
-  _handlerGoToHome = () => {
-
-  }
-
-  _handleLogin = () => {
+  _handleLogin = async () => {
     if (this.state.username === '' || this.state.password === '') {
       ToastAndroid.showWithGravity(
         'Email or password should not be empty',
@@ -50,31 +46,28 @@ export default class LoginScreen extends React.Component {
         ToastAndroid.BOTTOM,
       );
     } else {
-      let headers = {
+      const res = await this._handleHTTPLogin();
 
+      console.log(res.data);
+      console.log(res.data[0]);
+      console.log(res.data[0].access_token);
+      console.log(res.data[0]['access_token']);
+
+      if (res.data) {
+        ToastAndroid.showWithGravity(
+          'LOGIN SUCCESS',
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM,
+        );
+
+        this.props.navigation.navigate('Home', {item: this.state.username});
+      } else {
+        ToastAndroid.showWithGravity(
+          'LOGIN FAILED',
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM,
+        );
       }
-      Axios.post('https://private-370066-awesomeproject1.apiary-mock.com/login', {}, {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      })
-        .then(function (response) {
-          let res = response.data;
-          console.log(res);
-          ToastAndroid.showWithGravity(
-            'LOGIN SUCCESS',
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM,
-          );
-        })
-        .catch(function (error) {
-          console.log(error);
-          ToastAndroid.showWithGravity(
-            'LOGIN FAILED',
-            ToastAndroid.SHORT,
-            ToastAndroid.BOTTOM,
-          );
-        });
-
-      this.props.navigation.navigate('Home', {item: this.state.username});
     }
 
     this.setState({
@@ -88,14 +81,16 @@ export default class LoginScreen extends React.Component {
     })
   };
 
+  async _handleHTTPLogin() {
+    return await Axios.post('https://private-370066-awesomeproject1.apiary-mock.com/login', {}, {
+      headers: {'Content-Type': 'application/json'}
+    });
+  }
+
   _handleValidateEmail = (email) => {
     let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
   };
-
-  componentDidMount() {
-
-  }
 
   render() {
     return (
