@@ -48,14 +48,15 @@ export default class LoginScreen extends React.Component {
       );
     } else {
       const res = await this._handleHTTPLogin();
+      let token = JSON5.parse(res.data)[0].access_token;
 
-      console.log(JSON5.parse(res.data)[0].access_token);
+      console.log(token);
       // console.log(res.data);
       // console.log(res.data[0]);
       // console.log(res.data[0].access_token);
       // console.log(res.data[0]['access_token']);
 
-      if (JSON5.parse(res.data)[0].access_token) {
+      if (token) {
         ToastAndroid.showWithGravity(
           'LOGIN SUCCESS',
           ToastAndroid.SHORT,
