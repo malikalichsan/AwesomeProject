@@ -13,6 +13,7 @@ import CTextInput from "../../Components/CTextInput";
 import {styles} from './style';
 import { TextInput, Button } from 'react-native-paper';
 import Axios from 'axios';
+const JSON5 = require('json5');
 
 export default class LoginScreen extends React.Component {
   static navigationOptions = {
@@ -48,12 +49,13 @@ export default class LoginScreen extends React.Component {
     } else {
       const res = await this._handleHTTPLogin();
 
-      console.log(res.data);
-      console.log(res.data[0]);
-      console.log(res.data[0].access_token);
-      console.log(res.data[0]['access_token']);
+      console.log(JSON5.parse(res.data)[0].access_token);
+      // console.log(res.data);
+      // console.log(res.data[0]);
+      // console.log(res.data[0].access_token);
+      // console.log(res.data[0]['access_token']);
 
-      if (res.data) {
+      if (JSON5.parse(res.data)[0].access_token) {
         ToastAndroid.showWithGravity(
           'LOGIN SUCCESS',
           ToastAndroid.SHORT,
