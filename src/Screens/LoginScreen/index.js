@@ -14,8 +14,16 @@ import {styles} from './style';
 import { TextInput, Button } from 'react-native-paper';
 import Axios from 'axios';
 const JSON5 = require('json5');
+import {connect} from 'react-redux';
+import {SET_GLOBAL_DATA, SET_USER_DATA} from "../../Config/Reducer";
 
-export default class LoginScreen extends React.Component {
+class LoginScreen extends React.Component {
+  componentDidMount() {
+    if('token' in this.props.globalData) {
+      this.props.navigation.navigate('Home');
+    }
+  }
+
   static navigationOptions = {
     title: 'Awesome Project',
   };
@@ -49,6 +57,9 @@ export default class LoginScreen extends React.Component {
     } else {
       const res = await this._handleHTTPLogin();
       let token = JSON5.parse(res.data)[0].access_token;
+
+      this.props.setGlobalData({token: token});
+      this.props.setUserData({username: this.state.username});
 
       console.log(token);
       // console.log(res.data);
@@ -140,3 +151,30 @@ export default class LoginScreen extends React.Component {
     )
   }
 }
+
+const mapStateToProps = state => {
+  const {userData, globalData} = state;
+  return {userData, globalData};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setGlobalData: globalData => {
+      return dispatch({
+        type: SET_GLOBAL_DATA,
+        globalData: globalData,
+      });
+    },
+    setUserData: userData => {
+      return dispatch({
+        type: SET_USER_DATA,
+        userData: userData,
+      });
+    }
+  }
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(LoginScreen);
